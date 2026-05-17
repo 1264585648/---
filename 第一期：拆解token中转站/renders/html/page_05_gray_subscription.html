@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1600">
+  <title>Page 05 - 订阅转 API 的灰色地带</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --edge: 96px;
+      --text: #f4f1e8;
+      --muted: #a4aca5;
+      --dim: #68746d;
+      --green: #68e6a4;
+      --cyan: #62d9e8;
+      --amber: #f3b744;
+      --red: #ef665c;
+      --line: rgba(224, 238, 228, 0.15);
+      --line-strong: rgba(224, 238, 228, 0.28);
+      --shadow: rgba(0, 0, 0, 0.42);
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #242827;
+      overflow: hidden;
+      font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+    }
+    .stage {
+      width: calc(1600px * var(--fit-scale, 1));
+      height: calc(900px * var(--fit-scale, 1));
+      position: relative;
+      background: #0b0f0e;
+      overflow: hidden;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 1600px;
+      height: 900px;
+      transform: scale(var(--fit-scale, 1));
+      transform-origin: top left;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(104, 230, 164, 0.05) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(104, 230, 164, 0.036) 1px, transparent 1px),
+        radial-gradient(circle at 65% 34%, rgba(243, 183, 68, 0.12), transparent 34%),
+        radial-gradient(circle at 86% 72%, rgba(239, 102, 92, 0.075), transparent 28%),
+        linear-gradient(135deg, #0b0f0e 0%, #111715 54%, #080a0a 100%);
+      background-size: 64px 64px, 64px 64px, 100% 100%, 100% 100%, 100% 100%;
+    }
+    .slide::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.035), transparent 18%, transparent 76%, rgba(0,0,0,0.26)),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.022) 0, rgba(255,255,255,0.022) 1px, transparent 1px, transparent 4px);
+      opacity: 0.82;
+    }
+    .scan-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -24px;
+      height: 18px;
+      background: linear-gradient(180deg, transparent, rgba(243, 183, 68, 0.18), transparent);
+      opacity: 0.48;
+      animation: scan 9s linear infinite;
+    }
+    .chrome-top, .chrome-bottom {
+      position: absolute;
+      left: var(--edge);
+      right: var(--edge);
+      display: flex;
+      justify-content: space-between;
+      font: 14px "IBM Plex Mono", monospace;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(244, 241, 232, 0.46);
+      z-index: 4;
+    }
+    .chrome-top { top: 28px; }
+    .chrome-bottom { bottom: 24px; }
+    .main-frame {
+      position: absolute;
+      left: var(--edge);
+      right: var(--edge);
+      top: 108px;
+      bottom: 96px;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: 470px 1fr;
+      gap: 56px;
+      align-items: stretch;
+    }
+    .left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+    }
+    .eyebrow {
+      width: max-content;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 13px;
+      border: 1px solid rgba(243, 183, 68, 0.42);
+      background: rgba(243, 183, 68, 0.08);
+      color: var(--amber);
+      font: 18px "IBM Plex Mono", monospace;
+      letter-spacing: 0.08em;
+      opacity: 0;
+      transform: translateY(18px);
+      animation: revealUp 0.72s cubic-bezier(.2,.7,.2,1) 0.2s forwards;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 18px rgba(243, 183, 68, 0.72);
+      animation: blink 1.35s infinite;
+    }
+    h1 {
+      margin-top: 30px;
+      max-width: 460px;
+      font-size: 64px;
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: 0;
+      opacity: 0;
+      transform: translateY(22px);
+      animation: revealUp 0.84s cubic-bezier(.2,.7,.2,1) 0.52s forwards;
+    }
+    h1 .accent { color: var(--amber); }
+    .subtitle {
+      margin-top: 26px;
+      max-width: 450px;
+      color: rgba(244, 241, 232, 0.72);
+      font-size: 25px;
+      line-height: 1.46;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(18px);
+      animation: revealUp 0.78s cubic-bezier(.2,.7,.2,1) 1s forwards;
+    }
+    .conclusion {
+      margin-top: 38px;
+      padding: 22px 24px;
+      border-left: 4px solid var(--red);
+      background: rgba(239, 102, 92, 0.075);
+      box-shadow: 0 20px 54px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: translateY(18px);
+      animation: revealUp 0.78s cubic-bezier(.2,.7,.2,1) 3.35s forwards;
+    }
+    .conclusion .label {
+      font: 15px "IBM Plex Mono", monospace;
+      letter-spacing: 0.11em;
+      color: var(--red);
+      margin-bottom: 10px;
+    }
+    .conclusion .copy {
+      font-size: 27px;
+      line-height: 1.32;
+      font-weight: 800;
+    }
+    .right {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: 238px 1fr;
+      gap: 16px;
+      align-content: stretch;
+    }
+    .chain {
+      position: relative;
+      border: 1px solid rgba(243, 183, 68, 0.28);
+      background: rgba(18, 24, 22, 0.88);
+      box-shadow: 0 24px 62px var(--shadow);
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: revealUp 0.72s cubic-bezier(.2,.7,.2,1) 1.35s forwards;
+    }
+    .chain::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, transparent 0, rgba(243, 183, 68, 0.055) 49%, transparent 50%),
+        linear-gradient(0deg, transparent 0, rgba(243, 183, 68, 0.038) 49%, transparent 50%);
+      background-size: 42px 42px;
+      opacity: 0.45;
+    }
+    .chain-node {
+      position: absolute;
+      top: 66px;
+      width: 238px;
+      min-height: 112px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 18px;
+      border: 1px solid var(--line-strong);
+      background: rgba(18, 24, 22, 0.96);
+      box-shadow: 0 18px 44px rgba(0,0,0,0.34);
+      opacity: 0;
+      transform: translateY(16px);
+      animation: revealUp 0.66s cubic-bezier(.2,.7,.2,1) forwards;
+    }
+    .chain-node:nth-child(1) { left: 34px; animation-delay: 1.55s; }
+    .chain-node:nth-child(4) { left: 334px; border-color: rgba(243, 183, 68, 0.48); animation-delay: 1.95s; }
+    .chain-node:nth-child(7) { right: 34px; animation-delay: 2.35s; }
+    .chain-node .label {
+      font: 13px "IBM Plex Mono", monospace;
+      letter-spacing: 0.1em;
+      color: var(--dim);
+      margin-bottom: 8px;
+    }
+    .chain-node .name {
+      font-size: 26px;
+      line-height: 1.18;
+      font-weight: 900;
+    }
+    .chain-node.mid .name { color: var(--amber); }
+    .flow-line {
+      position: absolute;
+      top: 122px;
+      height: 2px;
+      background: rgba(243, 183, 68, 0.62);
+      transform-origin: left center;
+      transform: scaleX(0);
+      animation: drawLine 0.65s ease forwards;
+    }
+    .line-a { left: 272px; width: 62px; animation-delay: 1.8s; }
+    .line-b { left: 572px; width: 62px; animation-delay: 2.22s; }
+    .arrow {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      border-left: 12px solid var(--amber);
+      opacity: 0;
+      animation: revealUp 0.3s ease forwards;
+    }
+    .arrow-a { left: 322px; top: 116px; animation-delay: 2.02s; }
+    .arrow-b { left: 622px; top: 116px; animation-delay: 2.44s; }
+    .lower-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.16fr;
+      gap: 18px;
+      min-width: 0;
+    }
+    .panel {
+      position: relative;
+      padding: 20px 24px;
+      border: 1px solid var(--line);
+      background: rgba(18, 24, 22, 0.92);
+      box-shadow: 0 24px 62px var(--shadow);
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(22px);
+      animation: revealUp 0.72s cubic-bezier(.2,.7,.2,1) forwards;
+    }
+    .panel.source { animation-delay: 2.1s; }
+    .panel.risk { animation-delay: 2.6s; }
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, transparent 0, rgba(104, 230, 164, 0.04) 49%, transparent 50%),
+        linear-gradient(0deg, transparent 0, rgba(104, 230, 164, 0.032) 49%, transparent 50%);
+      background-size: 42px 42px;
+      opacity: 0.32;
+    }
+    .panel::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 4px;
+      opacity: 0.9;
+    }
+    .panel.source::after { background: var(--cyan); }
+    .panel.risk::after { background: var(--amber); }
+    .panel > * { position: relative; z-index: 1; }
+    .panel .index {
+      font: 15px "IBM Plex Mono", monospace;
+      letter-spacing: 0.11em;
+      color: var(--dim);
+      margin-bottom: 14px;
+    }
+    .panel .title {
+      font-size: 30px;
+      line-height: 1.16;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+    .source .title { color: var(--cyan); }
+    .risk .title { color: var(--amber); }
+    .tag-list {
+      display: grid;
+      gap: 8px;
+    }
+    .item {
+      padding: 9px 12px;
+      border: 1px solid rgba(244, 241, 232, 0.12);
+      background: rgba(255,255,255,0.035);
+      font-size: 20px;
+      line-height: 1.22;
+      font-weight: 800;
+    }
+    .source .item { border-left: 3px solid var(--cyan); }
+    .risk .item { border-left: 3px solid var(--amber); }
+    .risk .item {
+      font-size: 19px;
+      padding-top: 9px;
+      padding-bottom: 9px;
+    }
+    @keyframes revealUp { to { opacity: 1; transform: translateY(0); } }
+    @keyframes drawLine { to { transform: scaleX(1); } }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.34; } }
+    @keyframes scan { from { transform: translateY(0); } to { transform: translateY(948px); } }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="slide" role="img" aria-label="第二类订阅转 API 的灰色地带">
+      <div class="scan-line"></div>
+      <div class="chrome-top">
+        <div>INVESTIGATION / TOKEN RELAY</div>
+        <div>TYPE 02 / GRAY ZONE</div>
+      </div>
+      <main class="main-frame">
+        <section class="left">
+          <div class="eyebrow"><span class="dot"></span>TYPE 02</div>
+          <h1>订阅转 API 的<br><span class="accent">灰色地带</span></h1>
+          <p class="subtitle">它不是零成本黑产，但也不是清晰授权的正规代理。</p>
+          <div class="conclusion">
+            <div class="label">CORE RISK</div>
+            <div class="copy">问题不只是价格，而是原始用途能不能被这样转售。</div>
+          </div>
+        </section>
+
+        <section class="right">
+          <div class="chain" aria-label="订阅转 API 灰色转化链路">
+            <div class="chain-node">
+              <div class="label">ORIGINAL ACCESS</div>
+              <div class="name">订阅额度 / 网页端能力</div>
+            </div>
+            <div class="flow-line line-a"></div>
+            <div class="arrow arrow-a"></div>
+            <div class="chain-node mid">
+              <div class="label">REPACKAGE</div>
+              <div class="name">包装成 API</div>
+            </div>
+            <div class="flow-line line-b"></div>
+            <div class="arrow arrow-b"></div>
+            <div class="chain-node">
+              <div class="label">DOWNSTREAM</div>
+              <div class="name">低价卖给用户</div>
+            </div>
+          </div>
+
+          <div class="lower-grid">
+            <article class="panel source">
+              <div class="index">01 / COMMON SOURCE</div>
+              <div class="title">常见来源</div>
+              <div class="tag-list">
+                <div class="item">个人订阅</div>
+                <div class="item">会员额度</div>
+                <div class="item">网页端访问</div>
+                <div class="item">团队额度</div>
+                <div class="item">特定产品额度</div>
+              </div>
+            </article>
+
+            <article class="panel risk">
+              <div class="index">02 / GRAY RISK</div>
+              <div class="title">灰色风险</div>
+              <div class="tag-list">
+                <div class="item">授权边界模糊</div>
+                <div class="item">平台条款风险</div>
+                <div class="item">账号风控</div>
+                <div class="item">批量调用异常</div>
+                <div class="item">售后不可控</div>
+                <div class="item">数据责任不清</div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+      <div class="chrome-bottom">
+        <div>PAGE 05 / TYPE 02</div>
+        <div>05 / 10</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const fitStage = () => {
+      const scale = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+      document.documentElement.style.setProperty("--fit-scale", String(scale));
+    };
+    fitStage();
+    window.addEventListener("resize", fitStage);
+  </script>
+</body>
+</html>

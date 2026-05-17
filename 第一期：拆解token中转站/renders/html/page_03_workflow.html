@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1600">
+  <title>Page 03 - 三类中转站概览</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --edge: 96px;
+      --text: #f4f1e8;
+      --muted: #a4aca5;
+      --dim: #68746d;
+      --green: #68e6a4;
+      --cyan: #62d9e8;
+      --amber: #f3b744;
+      --red: #ef665c;
+      --line: rgba(224, 238, 228, 0.15);
+      --line-strong: rgba(224, 238, 228, 0.28);
+      --shadow: rgba(0, 0, 0, 0.42);
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #242827;
+      overflow: hidden;
+      font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+    }
+    .stage {
+      width: calc(1600px * var(--fit-scale, 1));
+      height: calc(900px * var(--fit-scale, 1));
+      position: relative;
+      background: #0b0f0e;
+      overflow: hidden;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 1600px;
+      height: 900px;
+      transform: scale(var(--fit-scale, 1));
+      transform-origin: top left;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(104, 230, 164, 0.055) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(104, 230, 164, 0.04) 1px, transparent 1px),
+        radial-gradient(circle at 74% 42%, rgba(243, 183, 68, 0.09), transparent 31%),
+        radial-gradient(circle at 88% 66%, rgba(239, 102, 92, 0.08), transparent 28%),
+        linear-gradient(135deg, #0b0f0e 0%, #111715 54%, #080a0a 100%);
+      background-size: 64px 64px, 64px 64px, 100% 100%, 100% 100%, 100% 100%;
+    }
+    .slide::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.035), transparent 18%, transparent 76%, rgba(0,0,0,0.26)),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.022) 0, rgba(255,255,255,0.022) 1px, transparent 1px, transparent 4px);
+      opacity: 0.82;
+    }
+    .scan-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -24px;
+      height: 18px;
+      background: linear-gradient(180deg, transparent, rgba(104, 230, 164, 0.18), transparent);
+      opacity: 0.48;
+      animation: scan 9s linear infinite;
+    }
+    .chrome-top, .chrome-bottom {
+      position: absolute;
+      left: var(--edge);
+      right: var(--edge);
+      display: flex;
+      justify-content: space-between;
+      font: 14px "IBM Plex Mono", monospace;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(244, 241, 232, 0.46);
+      z-index: 4;
+    }
+    .chrome-top { top: 28px; }
+    .chrome-bottom { bottom: 24px; }
+    .main-frame {
+      position: absolute;
+      left: var(--edge);
+      right: var(--edge);
+      top: 108px;
+      bottom: 96px;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: 440px 1fr;
+      gap: 58px;
+      align-items: stretch;
+    }
+    .left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+    }
+    .eyebrow {
+      width: max-content;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 13px;
+      border: 1px solid rgba(243, 183, 68, 0.42);
+      background: rgba(243, 183, 68, 0.08);
+      color: var(--amber);
+      font: 18px "IBM Plex Mono", monospace;
+      letter-spacing: 0.08em;
+      opacity: 0;
+      transform: translateY(18px);
+      animation: revealUp 0.72s cubic-bezier(.2,.7,.2,1) 0.2s forwards;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 18px rgba(243, 183, 68, 0.72);
+      animation: blink 1.35s infinite;
+    }
+    h1 {
+      margin-top: 30px;
+      max-width: 430px;
+      font-size: 68px;
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: 0;
+      opacity: 0;
+      transform: translateY(22px);
+      animation: revealUp 0.84s cubic-bezier(.2,.7,.2,1) 0.52s forwards;
+    }
+    h1 .accent { color: var(--amber); }
+    .subtitle {
+      margin-top: 26px;
+      max-width: 420px;
+      color: rgba(244, 241, 232, 0.72);
+      font-size: 26px;
+      line-height: 1.46;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(18px);
+      animation: revealUp 0.78s cubic-bezier(.2,.7,.2,1) 1s forwards;
+    }
+    .conclusion {
+      margin-top: 40px;
+      padding: 22px 24px;
+      border-left: 4px solid var(--red);
+      background: rgba(239, 102, 92, 0.075);
+      box-shadow: 0 20px 54px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: translateY(18px);
+      animation: revealUp 0.78s cubic-bezier(.2,.7,.2,1) 3.4s forwards;
+    }
+    .conclusion .label {
+      font: 15px "IBM Plex Mono", monospace;
+      letter-spacing: 0.11em;
+      color: var(--red);
+      margin-bottom: 10px;
+    }
+    .conclusion .copy {
+      font-size: 28px;
+      line-height: 1.32;
+      font-weight: 800;
+    }
+    .right {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: 96px 1fr;
+      gap: 20px;
+      align-content: stretch;
+    }
+    .spectrum {
+      position: relative;
+      border: 1px solid var(--line);
+      background: rgba(18, 24, 22, 0.78);
+      box-shadow: 0 18px 48px rgba(0,0,0,0.24);
+      opacity: 0;
+      transform: translateY(18px);
+      animation: revealUp 0.72s cubic-bezier(.2,.7,.2,1) 1.35s forwards;
+      overflow: hidden;
+    }
+    .spectrum-line {
+      position: absolute;
+      left: 42px;
+      right: 42px;
+      top: 45px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--green), var(--amber), var(--red));
+      transform-origin: left center;
+      transform: scaleX(0);
+      animation: drawLine 0.9s ease 1.55s forwards;
+    }
+    .spectrum-label {
+      position: absolute;
+      top: 20px;
+      font: 15px "IBM Plex Mono", monospace;
+      letter-spacing: 0.08em;
+      color: rgba(244, 241, 232, 0.58);
+    }
+    .spectrum-label.left { left: 42px; color: var(--green); }
+    .spectrum-label.mid { left: 50%; transform: translateX(-50%); color: var(--amber); }
+    .spectrum-label.right { right: 42px; color: var(--red); }
+    .spectrum-note {
+      position: absolute;
+      left: 42px;
+      bottom: 16px;
+      color: rgba(244, 241, 232, 0.56);
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      min-width: 0;
+    }
+    .type-card {
+      position: relative;
+      min-height: 0;
+      height: 100%;
+      padding: 22px 26px;
+      background: rgba(18, 24, 22, 0.92);
+      border: 1px solid var(--line);
+      box-shadow: 0 28px 70px var(--shadow);
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(22px);
+      animation: revealUp 0.72s cubic-bezier(.2,.7,.2,1) forwards;
+    }
+    .type-card:nth-child(1) { animation-delay: 1.75s; }
+    .type-card:nth-child(2) { animation-delay: 2.15s; }
+    .type-card:nth-child(3) { animation-delay: 2.55s; }
+    .type-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, transparent 0, rgba(104, 230, 164, 0.045) 49%, transparent 50%),
+        linear-gradient(0deg, transparent 0, rgba(104, 230, 164, 0.035) 49%, transparent 50%);
+      background-size: 42px 42px;
+      opacity: 0.35;
+    }
+    .type-card::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 4px;
+      opacity: 0.9;
+    }
+    .type-card.safe::after { background: var(--green); }
+    .type-card.gray::after { background: var(--amber); }
+    .type-card.illegal::after { background: var(--red); }
+    .type-card > * {
+      position: relative;
+      z-index: 1;
+    }
+    .index {
+      font: 16px "IBM Plex Mono", monospace;
+      letter-spacing: 0.12em;
+      color: var(--dim);
+      margin-bottom: 14px;
+    }
+    .risk {
+      width: max-content;
+      padding: 8px 11px;
+      font: 15px "IBM Plex Mono", monospace;
+      letter-spacing: 0.08em;
+      margin-bottom: 18px;
+      border: 1px solid currentColor;
+      background: rgba(255,255,255,0.035);
+    }
+    .safe .risk { color: var(--green); }
+    .gray .risk { color: var(--amber); }
+    .illegal .risk { color: var(--red); }
+    .title {
+      font-size: 32px;
+      line-height: 1.15;
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+    .desc {
+      min-height: 92px;
+      color: rgba(244, 241, 232, 0.68);
+      font-size: 20px;
+      line-height: 1.44;
+      font-weight: 500;
+      margin-bottom: 18px;
+    }
+    .tag-list {
+      display: grid;
+      gap: 10px;
+    }
+    .item {
+      padding: 10px 12px;
+      border: 1px solid rgba(244, 241, 232, 0.12);
+      background: rgba(255,255,255,0.035);
+      font-size: 20px;
+      line-height: 1.24;
+      font-weight: 800;
+    }
+    .safe .item { border-left: 3px solid var(--green); }
+    .gray .item { border-left: 3px solid var(--amber); }
+    .illegal .item { border-left: 3px solid var(--red); }
+    @keyframes revealUp { to { opacity: 1; transform: translateY(0); } }
+    @keyframes drawLine { to { transform: scaleX(1); } }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.34; } }
+    @keyframes scan { from { transform: translateY(0); } to { transform: translateY(948px); } }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="slide" role="img" aria-label="三类 Token 中转站风险概览">
+      <div class="scan-line"></div>
+      <div class="chrome-top">
+        <div>INVESTIGATION / TOKEN RELAY</div>
+        <div>RISK SPECTRUM</div>
+      </div>
+      <main class="main-frame">
+        <section class="left">
+          <div class="eyebrow"><span class="dot"></span>THREE TYPES</div>
+          <h1>三类中转站，<br>不要<span class="accent">混为一谈</span></h1>
+          <p class="subtitle">从相对合规的 API 网关，到订阅转 API 的灰色地带，再到几乎零成本的违法来源。</p>
+          <div class="conclusion">
+            <div class="label">CHECKPOINT</div>
+            <div class="copy">价格越低，来源越不透明，风险越高。</div>
+          </div>
+        </section>
+
+        <section class="right">
+          <div class="spectrum">
+            <div class="spectrum-label left">RELATIVE COMPLIANCE</div>
+            <div class="spectrum-label mid">GRAY ZONE</div>
+            <div class="spectrum-label right">ILLEGAL RISK</div>
+            <div class="spectrum-line"></div>
+            <div class="spectrum-note">先问来源，再谈价格</div>
+          </div>
+
+          <div class="cards">
+            <article class="type-card safe">
+              <div class="index">01</div>
+              <div class="risk">LOWER RISK</div>
+              <div class="title">相对合规<br>API 中转</div>
+              <div class="desc">有授权、有采购、有合同，核心价值是企业级统一接入和治理。</div>
+              <div class="tag-list">
+                <div class="item">授权采购</div>
+                <div class="item">企业网关</div>
+                <div class="item">账单审计</div>
+                <div class="item">服务协议</div>
+              </div>
+            </article>
+
+            <article class="type-card gray">
+              <div class="index">02</div>
+              <div class="risk">GRAY ZONE</div>
+              <div class="title">订阅转 API<br>灰色地带</div>
+              <div class="desc">把个人订阅或限定场景额度包装成 API，对外售卖。</div>
+              <div class="tag-list">
+                <div class="item">订阅额度包装</div>
+                <div class="item">授权边界模糊</div>
+                <div class="item">平台规则风险</div>
+                <div class="item">商业使用争议</div>
+              </div>
+            </article>
+
+            <article class="type-card illegal">
+              <div class="index">03</div>
+              <div class="risk">HIGH RISK</div>
+              <div class="title">几乎零成本<br>违法来源</div>
+              <div class="desc">不是商业模式创新，而是把非法获取的额度转卖成低价 API。</div>
+              <div class="tag-list">
+                <div class="item">白嫖账号</div>
+                <div class="item">凭证复用</div>
+                <div class="item">API Key 撞号</div>
+                <div class="item">盗刷信用卡</div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+      <div class="chrome-bottom">
+        <div>PAGE 03 / RISK SPECTRUM</div>
+        <div>03 / 10</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const fitStage = () => {
+      const scale = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+      document.documentElement.style.setProperty("--fit-scale", String(scale));
+    };
+    fitStage();
+    window.addEventListener("resize", fitStage);
+  </script>
+</body>
+</html>

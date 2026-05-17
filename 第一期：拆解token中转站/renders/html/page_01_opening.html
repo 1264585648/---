@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1600">
+  <title>Page 01 - Token 中转站开场</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --edge: 96px;
+      --bg: #0b0f0e;
+      --panel: #121816;
+      --panel-soft: #17211e;
+      --line: rgba(224, 238, 228, 0.15);
+      --line-strong: rgba(224, 238, 228, 0.28);
+      --text: #f4f1e8;
+      --muted: #a4aca5;
+      --dim: #68746d;
+      --green: #68e6a4;
+      --cyan: #62d9e8;
+      --amber: #f3b744;
+      --red: #ef665c;
+      --shadow: rgba(0, 0, 0, 0.42);
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #242827;
+      overflow: hidden;
+      font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+    }
+
+    .stage {
+      width: calc(1600px * var(--fit-scale, 1));
+      height: calc(900px * var(--fit-scale, 1));
+      position: relative;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 1600px;
+      height: 900px;
+      transform: scale(var(--fit-scale, 1));
+      transform-origin: top left;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(104, 230, 164, 0.055) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(104, 230, 164, 0.045) 1px, transparent 1px),
+        radial-gradient(circle at 68% 28%, rgba(98, 217, 232, 0.11), transparent 32%),
+        radial-gradient(circle at 84% 76%, rgba(243, 183, 68, 0.09), transparent 30%),
+        linear-gradient(135deg, #0b0f0e 0%, #111715 54%, #080a0a 100%);
+      background-size: 64px 64px, 64px 64px, 100% 100%, 100% 100%, 100% 100%;
+    }
+
+    .slide::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 20;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), transparent 18%, transparent 76%, rgba(0,0,0,0.24)),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0, rgba(255,255,255,0.025) 1px, transparent 1px, transparent 4px);
+      opacity: 0.82;
+    }
+
+    .scan-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -24px;
+      height: 18px;
+      background: linear-gradient(180deg, transparent, rgba(104, 230, 164, 0.2), transparent);
+      opacity: 0.5;
+      animation: scan 8.5s linear infinite;
+    }
+
+    .chrome-top,
+    .chrome-bottom {
+      position: absolute;
+      left: var(--edge);
+      right: var(--edge);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 14px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(244, 241, 232, 0.46);
+      z-index: 4;
+    }
+
+    .chrome-top { top: 28px; }
+    .chrome-bottom { bottom: 24px; }
+
+    .main-frame {
+      position: absolute;
+      left: var(--edge);
+      right: var(--edge);
+      top: 108px;
+      bottom: 96px;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: 605px 1fr;
+      gap: 78px;
+      align-items: center;
+    }
+
+    .left {
+      height: 640px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .eyebrow {
+      width: max-content;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 13px;
+      border: 1px solid rgba(243, 183, 68, 0.44);
+      background: rgba(243, 183, 68, 0.08);
+      color: var(--amber);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      opacity: 0;
+      transform: translateY(18px);
+      animation: revealUp 0.72s cubic-bezier(.2,.7,.2,1) 0.18s forwards;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 18px rgba(243, 183, 68, 0.72);
+      animation: blink 1.25s infinite;
+    }
+
+    h1 {
+      margin-top: 28px;
+      max-width: 600px;
+      font-size: 80px;
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: 0;
+      color: var(--text);
+      opacity: 0;
+      transform: translateY(24px);
+      animation: revealUp 0.82s cubic-bezier(.2,.7,.2,1) 0.55s forwards;
+    }
+
+    h1 .accent {
+      color: var(--green);
+    }
+
+    .subtitle {
+      margin-top: 28px;
+      max-width: 565px;
+      color: rgba(244, 241, 232, 0.74);
+      font-size: 28px;
+      line-height: 1.46;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: revealUp 0.78s cubic-bezier(.2,.7,.2,1) 1.05s forwards;
+    }
+
+    .hook-line {
+      margin-top: 40px;
+      width: 558px;
+      display: grid;
+      grid-template-columns: 118px 1fr;
+      gap: 18px;
+      align-items: center;
+      opacity: 0;
+      transform: translateY(18px);
+      animation: revealUp 0.78s cubic-bezier(.2,.7,.2,1) 5.65s forwards;
+    }
+
+    .token-meter {
+      width: 118px;
+      height: 118px;
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+
+    .token-meter svg {
+      position: absolute;
+      inset: 0;
+      width: 118px;
+      height: 118px;
+      animation: rotateMeter 8s linear 6.1s infinite;
+    }
+
+    .meter-text {
+      position: relative;
+      z-index: 1;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    .hook-copy {
+      padding: 18px 20px;
+      border: 1px solid rgba(104, 230, 164, 0.28);
+      background: rgba(104, 230, 164, 0.065);
+      box-shadow: 0 18px 46px rgba(0,0,0,0.22);
+    }
+
+    .hook-copy .small {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 16px;
+      letter-spacing: 0.08em;
+      color: var(--green);
+      margin-bottom: 6px;
+    }
+
+    .hook-copy .main {
+      font-size: 26px;
+      line-height: 1.34;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .right {
+      position: relative;
+      height: 640px;
+    }
+
+    .ad-wall {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 520px;
+      display: grid;
+      gap: 14px;
+      transform: rotate(-1deg);
+    }
+
+    .ad-card {
+      min-height: 94px;
+      padding: 19px 22px;
+      background: rgba(18, 24, 22, 0.94);
+      border: 1px solid var(--line);
+      box-shadow: 0 24px 54px var(--shadow);
+      opacity: 0;
+      transform: translateX(46px);
+      animation: cardIn 0.68s cubic-bezier(.2,.7,.2,1) forwards;
+    }
+
+    .ad-card:nth-child(1) { animation-delay: 1.45s; }
+    .ad-card:nth-child(2) { animation-delay: 1.72s; margin-left: 38px; }
+    .ad-card:nth-child(3) { animation-delay: 1.99s; }
+    .ad-card:nth-child(4) { animation-delay: 2.26s; margin-left: 56px; }
+    .ad-card:nth-child(5) { animation-delay: 2.53s; }
+
+    .ad-card .label {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 14px;
+      letter-spacing: 0.12em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .ad-card .copy {
+      font-size: 28px;
+      line-height: 1.22;
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .ad-card.price {
+      border-color: rgba(239, 102, 92, 0.44);
+      background: rgba(45, 22, 20, 0.9);
+    }
+
+    .ad-card.price .copy {
+      color: #ff7a70;
+      font-size: 34px;
+    }
+
+    .ad-card.official {
+      border-color: rgba(98, 217, 232, 0.34);
+    }
+
+    .question-badge {
+      position: absolute;
+      right: 0;
+      top: 78px;
+      width: 330px;
+      padding: 26px 26px 28px;
+      background: rgba(9, 13, 12, 0.92);
+      border: 1px solid rgba(243, 183, 68, 0.42);
+      box-shadow: 0 28px 72px var(--shadow);
+      opacity: 0;
+      transform: translateY(24px);
+      animation: revealUp 0.76s cubic-bezier(.2,.7,.2,1) 3.35s forwards;
+    }
+
+    .question-badge .mark {
+      font-family: "IBM Plex Mono", monospace;
+      color: var(--amber);
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+    }
+
+    .question-badge .text {
+      font-size: 38px;
+      line-height: 1.18;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .question-badge .text span {
+      color: var(--amber);
+    }
+
+    .price-gap {
+      position: absolute;
+      right: 10px;
+      bottom: 12px;
+      width: 430px;
+      padding: 24px;
+      background: rgba(23, 33, 30, 0.92);
+      border: 1px solid rgba(224, 238, 228, 0.16);
+      box-shadow: 0 26px 64px var(--shadow);
+      opacity: 0;
+      transform: translateY(24px);
+      animation: revealUp 0.76s cubic-bezier(.2,.7,.2,1) 7.35s forwards;
+    }
+
+    .price-gap .label {
+      font-family: "IBM Plex Mono", monospace;
+      color: var(--cyan);
+      font-size: 16px;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+
+    .gap-row {
+      display: grid;
+      grid-template-columns: 124px 1fr;
+      gap: 12px;
+      padding: 13px 0;
+      border-top: 1px solid rgba(244, 241, 232, 0.1);
+      font-size: 22px;
+      line-height: 1.36;
+    }
+
+    .gap-row strong {
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .gap-row span {
+      color: rgba(244, 241, 232, 0.64);
+    }
+
+    .big-question {
+      margin-top: 14px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(243, 183, 68, 0.22);
+      font-size: 30px;
+      line-height: 1.24;
+      font-weight: 900;
+      color: var(--amber);
+    }
+
+    .floating-tags {
+      position: absolute;
+      left: 168px;
+      bottom: 154px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      width: 360px;
+      opacity: 0;
+      animation: fadeIn 0.7s ease 4.55s forwards;
+    }
+
+    .tag {
+      padding: 8px 11px;
+      border: 1px solid rgba(104, 230, 164, 0.26);
+      background: rgba(104, 230, 164, 0.06);
+      color: var(--green);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+
+    @keyframes revealUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    @keyframes cardIn {
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.34; }
+    }
+
+    @keyframes scan {
+      from { transform: translateY(0); }
+      to { transform: translateY(948px); }
+    }
+
+    @keyframes rotateMeter {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="slide" role="img" aria-label="Token 中转站开场页动画">
+      <div class="scan-line"></div>
+
+      <div class="chrome-top">
+        <div>INVESTIGATION / TOKEN RELAY</div>
+        <div>OPENING SEQUENCE</div>
+      </div>
+
+      <main class="main-frame">
+        <section class="left">
+          <div class="eyebrow">
+            <span class="pulse-dot"></span>
+            LOW PRICE API SIGNAL
+          </div>
+
+          <h1>这种<span class="accent">低价 API</span><br>你刷到过吗？</h1>
+
+          <p class="subtitle">低倍率、国内直连、官方 API、注册送额度。看起来像开发者福利，但真正该问的是：便宜从哪里来？</p>
+
+          <div class="hook-line" aria-label="Token 是 AI 时代基础计费单位">
+            <div class="token-meter">
+              <svg viewBox="0 0 120 120" aria-hidden="true">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(244,241,232,.18)" stroke-width="6"/>
+                <path d="M60 10 A50 50 0 0 1 109 67" fill="none" stroke="#68e6a4" stroke-width="6" stroke-linecap="round"/>
+                <path d="M60 60 L86 39" stroke="#f3b744" stroke-width="5" stroke-linecap="round"/>
+                <circle cx="60" cy="60" r="6" fill="#f3b744"/>
+              </svg>
+              <div class="meter-text">TOKEN</div>
+            </div>
+            <div class="hook-copy">
+              <div class="small">BASIC UNIT</div>
+              <div class="main">Token 是 AI 时代的基础计费单位，像算力世界里的电表读数。</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="right">
+          <div class="ad-wall" aria-label="低价 API 广告信息流">
+            <div class="ad-card">
+              <div class="label">ROUTE</div>
+              <div class="copy">国内直连 · 低延迟</div>
+            </div>
+            <div class="ad-card official">
+              <div class="label">CLAIM</div>
+              <div class="copy">官方 API · 稳定转发</div>
+            </div>
+            <div class="ad-card">
+              <div class="label">MODELS</div>
+              <div class="copy">GPT / Claude / Gemini 全都有</div>
+            </div>
+            <div class="ad-card price">
+              <div class="label">PRICE</div>
+              <div class="copy">低至 0.1 元 / $1 额度</div>
+            </div>
+            <div class="ad-card">
+              <div class="label">SETUP</div>
+              <div class="copy">注册即送 · 即开即用</div>
+            </div>
+          </div>
+
+          <div class="question-badge">
+            <div class="mark">QUESTION</div>
+            <div class="text">你是否经常看到这样的<span>广告？</span></div>
+          </div>
+
+          <div class="floating-tags" aria-hidden="true">
+            <div class="tag">LOW RATE</div>
+            <div class="tag">DIRECT ACCESS</div>
+            <div class="tag">OFFICIAL API</div>
+            <div class="tag">FREE CREDITS</div>
+          </div>
+
+          <div class="price-gap">
+            <div class="label">PRICE GAP</div>
+            <div class="gap-row">
+              <strong>官方 API</strong>
+              <span>按 Token 计费，有速率限制和合规边界</span>
+            </div>
+            <div class="gap-row">
+              <strong>低价中转</strong>
+              <span>更便宜、更宽松，但说明往往更少</span>
+            </div>
+            <div class="big-question">如果价格低到离谱，风险被转移给了谁？</div>
+          </div>
+        </section>
+      </main>
+
+      <div class="chrome-bottom">
+        <div>PAGE 01 / OPENING HOOK</div>
+        <div>01 / 10</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const fitStage = () => {
+      const scale = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+      document.documentElement.style.setProperty("--fit-scale", String(scale));
+    };
+
+    fitStage();
+    window.addEventListener("resize", fitStage);
+  </script>
+</body>
+</html>

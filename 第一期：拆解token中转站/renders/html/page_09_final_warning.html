@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1600">
+  <title>Page 09 - 旧式中转套利时代已经过去</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root { --edge:96px; --text:#f4f1e8; --dim:#68746d; --green:#68e6a4; --cyan:#62d9e8; --amber:#f3b744; --red:#ef665c; --line:rgba(224,238,228,.15); --shadow:rgba(0,0,0,.42); }
+    body { min-height:100vh; display:flex; align-items:center; justify-content:center; background:#242827; overflow:hidden; font-family:"Noto Sans SC","Microsoft YaHei",sans-serif; color:var(--text); }
+    .stage { width:calc(1600px * var(--fit-scale,1)); height:calc(900px * var(--fit-scale,1)); position:relative; background:#0b0f0e; overflow:hidden; }
+    .slide { position:absolute; inset:0; width:1600px; height:900px; transform:scale(var(--fit-scale,1)); transform-origin:top left; overflow:hidden; background:
+      linear-gradient(90deg, rgba(104,230,164,.05) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(104,230,164,.036) 1px, transparent 1px),
+      radial-gradient(circle at 70% 30%, rgba(239,102,92,.14), transparent 33%),
+      radial-gradient(circle at 86% 72%, rgba(243,183,68,.08), transparent 30%),
+      linear-gradient(135deg,#0b0f0e 0%,#111715 54%,#080a0a 100%); background-size:64px 64px,64px 64px,100% 100%,100% 100%,100% 100%; }
+    .slide::after { content:""; position:absolute; inset:0; z-index:20; pointer-events:none; background:linear-gradient(180deg,rgba(255,255,255,.035),transparent 18%,transparent 76%,rgba(0,0,0,.28)),repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0,rgba(255,255,255,.022) 1px,transparent 1px,transparent 4px); opacity:.82; }
+    .scan-line { position:absolute; left:0; right:0; top:-24px; height:18px; background:linear-gradient(180deg,transparent,rgba(239,102,92,.22),transparent); opacity:.52; animation:scan 9s linear infinite; }
+    .chrome-top,.chrome-bottom { position:absolute; left:var(--edge); right:var(--edge); display:flex; justify-content:space-between; font:14px "IBM Plex Mono",monospace; letter-spacing:.16em; text-transform:uppercase; color:rgba(244,241,232,.46); z-index:4; }
+    .chrome-top{top:28px}.chrome-bottom{bottom:24px}
+    .main-frame { position:absolute; left:var(--edge); right:var(--edge); top:108px; bottom:96px; z-index:3; display:grid; grid-template-columns:470px 1fr; gap:56px; align-items:stretch; }
+    .left{display:flex; flex-direction:column; justify-content:center; min-width:0}
+    .eyebrow{width:max-content;display:flex;align-items:center;gap:12px;padding:9px 13px;border:1px solid rgba(239,102,92,.44);background:rgba(239,102,92,.08);color:var(--red);font:18px "IBM Plex Mono",monospace;letter-spacing:.08em;opacity:0;transform:translateY(18px);animation:revealUp .72s cubic-bezier(.2,.7,.2,1) .2s forwards}
+    .dot{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 18px rgba(239,102,92,.72);animation:blink 1.35s infinite}
+    h1{margin-top:30px;max-width:460px;font-size:64px;line-height:1.08;font-weight:900;opacity:0;transform:translateY(22px);animation:revealUp .84s cubic-bezier(.2,.7,.2,1) .52s forwards}
+    h1 .accent{color:var(--red)}
+    .subtitle{margin-top:26px;max-width:450px;color:rgba(244,241,232,.72);font-size:25px;line-height:1.46;font-weight:500;opacity:0;transform:translateY(18px);animation:revealUp .78s cubic-bezier(.2,.7,.2,1) 1s forwards}
+    .final{margin-top:38px;padding:22px 24px;border-left:4px solid var(--green);background:rgba(104,230,164,.075);box-shadow:0 20px 54px rgba(0,0,0,.2);opacity:0;transform:translateY(18px);animation:revealUp .78s cubic-bezier(.2,.7,.2,1) 3.5s forwards}
+    .final .label{font:15px "IBM Plex Mono",monospace;letter-spacing:.11em;color:var(--green);margin-bottom:10px}
+    .final .copy{font-size:28px;line-height:1.28;font-weight:900}
+    .right{display:grid;grid-template-rows:150px 250px 1fr;gap:18px;min-width:0}
+    .pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:20px;border:1px solid rgba(239,102,92,.28);background:rgba(239,102,92,.06);box-shadow:0 20px 52px rgba(0,0,0,.22);opacity:0;transform:translateY(18px);animation:revealUp .72s cubic-bezier(.2,.7,.2,1) 1.35s forwards}
+    .step{display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;border:1px solid rgba(244,241,232,.13);background:rgba(255,255,255,.035);font:18px "IBM Plex Mono",monospace;line-height:1.18;font-weight:700;color:rgba(244,241,232,.82)}
+    .pressure-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .pressure{position:relative;padding:18px 20px;border:1px solid var(--line);background:rgba(18,24,22,.92);box-shadow:0 18px 44px rgba(0,0,0,.26);opacity:0;transform:translateY(18px);animation:revealUp .62s cubic-bezier(.2,.7,.2,1) forwards}
+    .pressure:nth-child(1){animation-delay:2.1s}.pressure:nth-child(2){animation-delay:2.22s}.pressure:nth-child(3){animation-delay:2.34s}.pressure:nth-child(4){animation-delay:2.46s}.pressure:nth-child(5){animation-delay:2.58s}.pressure:nth-child(6){animation-delay:2.7s}
+    .pressure::after{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--red);opacity:.9}
+    .pmark{font:13px "IBM Plex Mono",monospace;letter-spacing:.1em;color:var(--dim);margin-bottom:12px}
+    .ptitle{font-size:26px;line-height:1.18;font-weight:900}
+    .sword{position:relative;display:grid;grid-template-columns:260px 1fr;gap:22px;align-items:center;padding:22px 26px;border:1px solid rgba(243,183,68,.3);background:rgba(243,183,68,.07);box-shadow:0 20px 52px rgba(0,0,0,.22);opacity:0;transform:translateY(18px);animation:revealUp .72s cubic-bezier(.2,.7,.2,1) 3s forwards;overflow:hidden}
+    .sword::before{content:"";position:absolute;left:128px;top:-42px;width:4px;height:160px;background:linear-gradient(180deg,rgba(244,241,232,.2),var(--amber),rgba(244,241,232,.18));box-shadow:0 0 24px rgba(243,183,68,.5)}
+    .sword .mark{font:16px "IBM Plex Mono",monospace;letter-spacing:.12em;color:var(--amber)}
+    .sword .copy{font-size:32px;line-height:1.24;font-weight:900}
+    @keyframes revealUp{to{opacity:1;transform:translateY(0)}} @keyframes blink{0%,100%{opacity:1}50%{opacity:.34}} @keyframes scan{from{transform:translateY(0)}to{transform:translateY(948px)}}
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="slide" role="img" aria-label="旧式中转套利时代已经过去">
+      <div class="scan-line"></div>
+      <div class="chrome-top"><div>INVESTIGATION / TOKEN RELAY</div><div>FINAL WARNING</div></div>
+      <main class="main-frame">
+        <section class="left">
+          <div class="eyebrow"><span class="dot"></span>FINAL WARNING</div>
+          <h1>旧式中转套利时代，<br><span class="accent">已经过去</span></h1>
+          <p class="subtitle">靠克隆网关、反代账号池、快速充值收款的粗放模式，会被风控和监管持续压缩。</p>
+          <div class="final"><div class="label">FINAL POINT</div><div class="copy">最便宜的接口会被替代，最可信的网关才会留下。</div></div>
+        </section>
+        <section class="right">
+          <div class="pipeline">
+            <div class="step">Clone<br>New API</div>
+            <div class="step">Deploy</div>
+            <div class="step">反代账号池</div>
+            <div class="step">充值收款</div>
+            <div class="step">快速捞金</div>
+          </div>
+          <div class="pressure-grid">
+            <div class="pressure"><div class="pmark">01</div><div class="ptitle">上游风控</div></div>
+            <div class="pressure"><div class="pmark">02</div><div class="ptitle">账号封禁</div></div>
+            <div class="pressure"><div class="pmark">03</div><div class="ptitle">支付风控</div></div>
+            <div class="pressure"><div class="pmark">04</div><div class="ptitle">服务条款</div></div>
+            <div class="pressure"><div class="pmark">05</div><div class="ptitle">地区合规</div></div>
+            <div class="pressure"><div class="pmark">06</div><div class="ptitle">监管完善</div></div>
+          </div>
+          <div class="sword">
+            <div class="mark">COMPLIANCE</div>
+            <div class="copy">合规问题，是悬在中转站头顶的达摩克里斯之剑。</div>
+          </div>
+        </section>
+      </main>
+      <div class="chrome-bottom"><div>PAGE 09 / FINAL</div><div>09 / 10</div></div>
+    </div>
+  </div>
+  <script>
+    const fitStage=()=>{const scale=Math.min(window.innerWidth/1600,window.innerHeight/900);document.documentElement.style.setProperty("--fit-scale",String(scale));};
+    fitStage(); window.addEventListener("resize",fitStage);
+  </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+﻿{
+    "source":  "minimaxi web tts",
+    "audio_id":  "399133093855408",
+    "text":  "这是一段 MiniMax 语音界面生成测试。我们用它来验证视频解说的音色和节奏。",
+    "audio_url":  "https://cdn.hailuoai.com/prod/2026-05-17-13/moss-audio/user_audio/1778997596203724826-399133093855408_2026-05-17_speech-2.8-hd.mp3",
+    "cost_credit":  69,
+    "created_at":  "2026-05-17T14:01:40.3400497+08:00",
+    "output":  "C:\\Users\\zhuxuan\\Desktop\\视频制作\\assets\\audio\\minimaxi_ui_test.mp3",
+    "voice":  "Credible Alex - 质朴自然,娓娓道来,经验分享感",
+    "model":  "speech-2.8-hd"
+}

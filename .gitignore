@@ -1,0 +1,10 @@
+node_modules/
+.browser-minimaxi/
+.browser-minimaxi-from-default/
+
+# Local generated browser/debug screenshots
+assets/audio/minimaxi_*.png
+
+# OS/editor noise
+.DS_Store
+Thumbs.db

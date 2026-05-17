@@ -1,0 +1,12 @@
+﻿{
+    "source":  "minimaxi web tts",
+    "audio_id":  "1779023774552631323",
+    "text_source":  "C:\\Users\\zhuxuan\\Desktop\\视频制作\\第一期：拆解token中转站\\final_narration.md",
+    "audio_url":  "https://cdn.hailuoai.com/prod/2026-05-17-21/moss-audio/user_audio/1779023774552631323-_2026-05-17_speech-2.8-hd.mp3",
+    "created_at":  "2026-05-17T21:28:15.5247868+08:00",
+    "output":  "C:\\Users\\zhuxuan\\Desktop\\视频制作\\assets\\audio\\token_relay_narration.mp3",
+    "voice":  "Credible Alex - 质朴自然,娓娓道来,经验分享感",
+    "model":  "speech-2.8-hd",
+    "chars_shown_in_ui":  6097,
+    "note":  "Generated from 9-page current video narration to keep audio aligned with existing video pages."
+}
